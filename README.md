@@ -19,13 +19,13 @@ Asegúrate de tener instalados los siguientes requisitos previos:
 
 1. Clona este repositorio en tu máquina local:
 ````bash
-    git clone https://github.com/tu-usuario/proyecto-laravel.git
+    git clone https://github.com/andyBlack13/linktic-laravel.git
 ````
 
 2. Navega hasta el directorio del proyecto:
 
 ````bash
-    cd proyecto-laravel
+    cd linktic-laravel
 ````
 
 3. Instala las dependencias de PHP utilizando Composer:
