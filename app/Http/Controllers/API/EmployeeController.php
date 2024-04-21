@@ -20,7 +20,7 @@ class EmployeeController extends Controller
  *     tags={"Empleados"},
  *     @OA\Response(
  *         response=200,
- *         description="Obtiene las empresas activas",
+ *         description="Obtiene empleados activos",
  *         @OA\JsonContent(
  *             @OA\Property(
  *                 type="array",
@@ -33,27 +33,37 @@ class EmployeeController extends Controller
  *                         example="1"
  *                     ),
  *                     @OA\Property(
- *                         property="name",
+ *                         property="first_name",
  *                         type="string",
- *                         example="Company 1"
+ *                         example="Andrea"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="last_name",
+ *                         type="string",
+ *                         example="Camargo"
  *                     ),
  *                     @OA\Property(
  *                         property="email",
  *                         type="string",
- *                         example="company1@example.com"
+ *                         example="andyy.1234@gmail.com"
  *                     ),
  *                     @OA\Property(
- *                         property="logo",
+ *                         property="phone_number",
  *                         type="string",
- *                         example="company1_logo.png"
+ *                         example="+571234567890"
  *                     ),
  *                     @OA\Property(
- *                         property="website",
- *                         type="string",
- *                         example="https://www.company1.com"
+ *                         property="company_id",
+ *                         type="number",
+ *                         example="2"
  *                     ),
  *                     @OA\Property(
- *                         property="sttaus",
+ *                         property="rol_company_id",
+ *                         type="number",
+ *                         example="5"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="status",
  *                         type="boolean",
  *                         example="true"
  *                     ),
@@ -72,6 +82,14 @@ class EmployeeController extends Controller
  *                 )
  *             )
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Not Found"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal Server Error"
  *     )
  * )
  */
@@ -91,8 +109,6 @@ class EmployeeController extends Controller
         $roles_company = RolCompany::where('status', true)->get();
         return view('employees.create', compact('companies', 'roles_company'));
     }
-
-// security={{"X-CSRF-TOKEN": {}}},
     
 /**
  * Crea un nuevo empleado
@@ -103,45 +119,71 @@ class EmployeeController extends Controller
  * @OA\Post (
  *     path="/api/employees",
  *     tags={"Empleados"},
+ *     description="",
  *     @OA\RequestBody(
+ *         required=true,
+ *         description="",
  *         @OA\JsonContent(
- *             @OA\Property(
- *                 property="name",
- *                 type="string",
- *                 example="Nombre de la empresa"
- *             ),
- *             @OA\Property(
- *                 property="email",
- *                 type="string",
- *                 format="email",
- *                 example="empresa@example.com"
- *             ),
- *             @OA\Property(
- *                 property="logo",
- *                 type="string",
- *                 format="binary",
- *                 description="Logo de la empresa (archivo)"
- *             ),
- *             @OA\Property(
- *                 property="website",
- *                 type="string",
- *                 example="https://www.empresa.com"
- *             ),
- *             @OA\Property(
- *                  property="status",
- *                  type="boolean",
- *                  example="true"
- *             )
- *         )
+ *                 @OA\Property(
+ *                     property="first_name",
+ *                     type="string",
+ *                     example="Maria"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="last_name",
+ *                     type="string",
+ *                     example="López"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="email",
+ *                     type="string",
+ *                     format="email",
+ *                     example="maria.1234566@example.com"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="phone_number",
+ *                     type="string",
+ *                     example="+371234567890"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="company_id",
+ *                     type="number",
+ *                     example="1"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="rol_company_id",
+ *                     type="number",
+ *                     example="1"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="status",
+ *                     type="boolean",
+ *                     example=true
+ *                 ),
+ *                 @OA\Property(
+ *                     property="X-Requested-By",
+ *                     type="string",
+ *                     example="API",
+ *                     description="Encabezado para identificar que la solicitud proviene de la API"
+ *                 ),
+ *        )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Empresa creada exitosamente"
+ *         description="Empleado creado exitosamente"
  *     ),
  *     @OA\Response(
  *         response=419,
  *         description="Token CSRF mismatch"
- *     )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Not Found"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal Server Error, Email Duplicated, Try with other email"
+ *     ),
  * )
  */
 
@@ -151,8 +193,9 @@ class EmployeeController extends Controller
         
         $employee = Employee::create($validatedData);
     
-        if ($request->wantsJson()) {
-            return response()->json($employee, 201);
+        // Verifica si la solicitud proviene de la API si no retorna una vista
+        if ($request->has('X-Requested-By') && $request->input('X-Requested-By') === 'API') {
+            return response()->json($employee, 200);
         } else {
             return redirect()->route('employees.index');
         }
@@ -177,7 +220,7 @@ class EmployeeController extends Controller
     }
 
     /**
- * Actualiza los datos de una empresa
+ * Actualiza los datos de una empleado
  * 
  * @param  \App\Http\Requests\CompanyRequest  $request
  * @param  int  $id
@@ -198,58 +241,77 @@ class EmployeeController extends Controller
  *     @OA\RequestBody(
  *         @OA\JsonContent(
  *             @OA\Property(
- *                 property="name",
+ *                 property="first_name",
  *                 type="string",
- *                 example="Nuevo nombre de la empresa"
+ *                 example="Pedro"
+ *             ),
+ *             @OA\Property(
+ *                 property="last_name",
+ *                 type="string",
+ *                 example="Rojas"
  *             ),
  *             @OA\Property(
  *                 property="email",
  *                 type="string",
  *                 format="email",
- *                 example="nuevoemail@empresa.com"
+ *                 example="pedro123@empleado.com"
  *             ),
  *             @OA\Property(
- *                 property="website",
+ *                 property="phone_number",
  *                 type="string",
- *                 example="https://www.nuevaempresa.com"
+ *                 example="+571234567890"
  *             ),
  *             @OA\Property(
- *                 property="logo",
+ *                 property="company_id",
+ *                 type="number",
+ *                 example="2"
+ *             ),
+ *             @OA\Property(
+ *                 property="rol_company_id",
  *                 type="string",
- *                 format="binary",
- *                 description="Nuevo logo de la empresa (archivo)"
+ *                 example="3"
+ *             ),
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="boolean",
+ *                 example="true"
  *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Empresa actualizada correctamente",
+ *         description="Empleado actualizado correctamente",
  *         @OA\JsonContent(
  *             @OA\Property(
- *                 property="id",
- *                 type="number",
- *                 example="1"
+ *                 property="first_name",
+ *                 type="string",
+ *                 example="Pedro"
  *             ),
  *             @OA\Property(
- *                 property="name",
+ *                 property="last_name",
  *                 type="string",
- *                 example="Nuevo nombre de la empresa"
+ *                 example="Rojas"
  *             ),
  *             @OA\Property(
  *                 property="email",
  *                 type="string",
  *                 format="email",
- *                 example="nuevoemail@empresa.com"
+ *                 example="pedro123@empleado.com"
  *             ),
  *             @OA\Property(
- *                 property="logo",
+ *                 property="phone_number",
  *                 type="string",
- *                 example="nuevo-nombre-de-la-empresa-2024-04-20-23-31-05.png"
+ *                 example="+571234567890"
  *             ),
  *             @OA\Property(
- *                 property="website",
+ *                 property="company_id",
+ *                 type="number",
+ *                 example="2"
+ *             ),
+ *             @OA\Property(
+ *                 property="rol_company_id",
  *                 type="string",
- *                 example="https://www.nuevaempresa.com"
+ *                 example="3"
  *             ),
  *             @OA\Property(
  *                 property="status",
@@ -286,13 +348,13 @@ class EmployeeController extends Controller
     }
 
 /**
- * Elimina una empresa
+ * Elimina un empleado
  * 
  * @param  int  $id
  * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
  * 
- * @OA\Delete (
- *     path="/api/employees/{id}",
+ * @OA\Post (
+ *     path="/api/employees/{id}/delete",
  *     tags={"Empleados"},
  *     description="No elimina el registro solo cambia de activo a inactivo, esto para no perder información, desde el Front-end se puede manejar este estado para mostrar o no mostrar los registros",
  *     @OA\Parameter(
@@ -304,20 +366,31 @@ class EmployeeController extends Controller
  *             type="integer"
  *         )
  *     ),
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *            @OA\Property(
+ *                property="X-Requested-By",
+ *                type="string",
+ *                example="API",
+ *                description="Encabezado para identificar que la solicitud proviene de la API"
+ *            )
+ *         )
+ *     ),
  *     @OA\Response(
- *         response=204,
- *         description="Empresa eliminada correctamente"
+ *         response=200,
+ *         description="Empleado eliminado correctamente"
  *     )
  * )
  */
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        $company = Company::findOrFail($id);
-        $company->update(['status' => false]);
+        $employee = Employee::findOrFail($id);
+        $employee->update(['status' => false]);
 
-        if (request()->wantsJson()) {
-            return response()->json(null, 204);
+        // Verifica si la solicitud proviene de la API si no retorna una vista
+        if ($request->has('X-Requested-By') && $request->input('X-Requested-By') === 'API') {
+            return response()->json($employee, 200);
         } else {
             return redirect()->route('employees.index')->with('success', 'Empleado eliminado correctamente');
         }

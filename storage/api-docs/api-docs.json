@@ -86,10 +86,13 @@
                     "Empresas"
                 ],
                 "summary": "Crea una nueva empresa",
+                "description": "Se ha agregado un campo más sólo para validar que es API y pueda responder con un JSON y no con la vista para blade, esto no se hace normalmente pero lo agregue para que ustedes pudieran testear ya sea desde la API de Swagger o desde la interfaz de usuario. Para testear solo ve cambiando los emails en cada prueba y carga una imagen.",
                 "operationId": "cee123b1da67beec88470f8ceb3fcb95",
                 "requestBody": {
+                    "description": "Datos de la empresa incluyendo el logo",
+                    "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "properties": {
                                     "name": {
@@ -99,7 +102,7 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "empresa@example.com"
+                                        "example": "empresa123456@example123456.com"
                                     },
                                     "logo": {
                                         "description": "Logo de la empresa (archivo)",
@@ -112,7 +115,12 @@
                                     },
                                     "status": {
                                         "type": "boolean",
-                                        "example": "true"
+                                        "example": true
+                                    },
+                                    "X-Requested-By": {
+                                        "description": "Encabezado para identificar que la solicitud proviene de la API",
+                                        "type": "string",
+                                        "example": "API"
                                     }
                                 },
                                 "type": "object"
@@ -131,7 +139,7 @@
                         "description": "Not Found"
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal Server Error, Email Duplicated, Try with other email"
                     }
                 }
             }
@@ -142,6 +150,7 @@
                     "Empresas"
                 ],
                 "summary": "Actualiza los datos de una empresa",
+                "description": "Se ha agregado un campo más sólo para validar que es API y pueda responder con un JSON y no con la vista para blade, esto no se hace normalmente pero lo agregue para que ustedes pudieran testear ya sea desde la API de Swagger o desde la interfaz de usuario. Para testear solo ve cambiando los emails en cada prueba y carga una imagen. Puedes ejecutar el endpoint para traer todas las empresas y tomar el id del registro para introducirlo.",
                 "operationId": "c125e6ebfb9c7669666225b619092333",
                 "parameters": [
                     {
@@ -155,27 +164,38 @@
                     }
                 ],
                 "requestBody": {
+                    "description": "Datos de la empresa incluyendo el logo",
+                    "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "example": "Nuevo nombre de la empresa"
+                                        "example": "Nombre de la empresa"
                                     },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "nuevoemail@empresa.com"
+                                        "example": "empresa123456@example123456.com"
+                                    },
+                                    "logo": {
+                                        "description": "Logo de la empresa (archivo)",
+                                        "type": "string",
+                                        "format": "binary"
                                     },
                                     "website": {
                                         "type": "string",
-                                        "example": "https://www.nuevaempresa.com"
+                                        "example": "https://www.empresa.com"
                                     },
-                                    "logo": {
-                                        "description": "Nuevo logo de la empresa (archivo)",
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "X-Requested-By": {
+                                        "description": "Encabezado para identificar que la solicitud proviene de la API",
                                         "type": "string",
-                                        "format": "binary"
+                                        "example": "API"
                                     }
                                 },
                                 "type": "object"
@@ -230,15 +250,27 @@
                                 }
                             }
                         }
+                    },
+                    "419": {
+                        "description": "Token CSRF mismatch"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error, Email Duplicated, Try with other email"
                     }
                 }
-            },
-            "delete": {
+            }
+        },
+        "/api/companies/{id}/delete": {
+            "post": {
                 "tags": [
                     "Empresas"
                 ],
                 "summary": "Elimina una empresa",
-                "operationId": "124aa61ff352c83ede5872644b0ac00d",
+                "description": "Se ha agregado un campo más sólo para validar que es API y pueda responder con un JSON. Ademas se utilizó el metodo POST porque solo inactivamos el registro. Coloca solo un ID existente de alguna empresa y ejecuta.",
+                "operationId": "b183339719f46bb7892ef149a9deaa88",
                 "parameters": [
                     {
                         "name": "id",
@@ -250,8 +282,24 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "X-Requested-By": {
+                                        "description": "Encabezado para identificar que la solicitud proviene de la API",
+                                        "type": "string",
+                                        "example": "API"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
-                    "204": {
+                    "200": {
                         "description": "Empresa eliminada correctamente"
                     }
                 }
@@ -266,7 +314,7 @@
                 "operationId": "2058499f556b4bb9477e07e7a0912c43",
                 "responses": {
                     "200": {
-                        "description": "Obtiene las empresas activas",
+                        "description": "Obtiene empleados activos",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -279,23 +327,31 @@
                                                         "type": "number",
                                                         "example": "1"
                                                     },
-                                                    "name": {
+                                                    "first_name": {
                                                         "type": "string",
-                                                        "example": "Company 1"
+                                                        "example": "Andrea"
+                                                    },
+                                                    "last_name": {
+                                                        "type": "string",
+                                                        "example": "Camargo"
                                                     },
                                                     "email": {
                                                         "type": "string",
-                                                        "example": "company1@example.com"
+                                                        "example": "andyy.1234@gmail.com"
                                                     },
-                                                    "logo": {
+                                                    "phone_number": {
                                                         "type": "string",
-                                                        "example": "company1_logo.png"
+                                                        "example": "+571234567890"
                                                     },
-                                                    "website": {
-                                                        "type": "string",
-                                                        "example": "https://www.company1.com"
+                                                    "company_id": {
+                                                        "type": "number",
+                                                        "example": "2"
                                                     },
-                                                    "sttaus": {
+                                                    "rol_company_id": {
+                                                        "type": "number",
+                                                        "example": "5"
+                                                    },
+                                                    "status": {
                                                         "type": "boolean",
                                                         "example": "true"
                                                     },
@@ -318,6 +374,12 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             },
@@ -326,33 +388,48 @@
                     "Empleados"
                 ],
                 "summary": "Crea un nuevo empleado",
+                "description": "",
                 "operationId": "7683a7b1aec5103190be815e1e30f7da",
                 "requestBody": {
+                    "description": "",
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "name": {
+                                    "first_name": {
                                         "type": "string",
-                                        "example": "Nombre de la empresa"
+                                        "example": "Maria"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "López"
                                     },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "empresa@example.com"
+                                        "example": "maria.1234566@example.com"
                                     },
-                                    "logo": {
-                                        "description": "Logo de la empresa (archivo)",
+                                    "phone_number": {
                                         "type": "string",
-                                        "format": "binary"
+                                        "example": "+371234567890"
                                     },
-                                    "website": {
-                                        "type": "string",
-                                        "example": "https://www.empresa.com"
+                                    "company_id": {
+                                        "type": "number",
+                                        "example": "1"
+                                    },
+                                    "rol_company_id": {
+                                        "type": "number",
+                                        "example": "1"
                                     },
                                     "status": {
                                         "type": "boolean",
-                                        "example": "true"
+                                        "example": true
+                                    },
+                                    "X-Requested-By": {
+                                        "description": "Encabezado para identificar que la solicitud proviene de la API",
+                                        "type": "string",
+                                        "example": "API"
                                     }
                                 },
                                 "type": "object"
@@ -362,10 +439,16 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Empresa creada exitosamente"
+                        "description": "Empleado creado exitosamente"
                     },
                     "419": {
                         "description": "Token CSRF mismatch"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error, Email Duplicated, Try with other email"
                     }
                 }
             }
@@ -375,7 +458,7 @@
                 "tags": [
                     "Empleados"
                 ],
-                "summary": "Actualiza los datos de una empresa",
+                "summary": "Actualiza los datos de una empleado",
                 "operationId": "5cc6df4bd0c5be4084900d70ecc36a25",
                 "parameters": [
                     {
@@ -393,23 +476,34 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "name": {
+                                    "first_name": {
                                         "type": "string",
-                                        "example": "Nuevo nombre de la empresa"
+                                        "example": "Pedro"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "Rojas"
                                     },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "nuevoemail@empresa.com"
+                                        "example": "pedro123@empleado.com"
                                     },
-                                    "website": {
+                                    "phone_number": {
                                         "type": "string",
-                                        "example": "https://www.nuevaempresa.com"
+                                        "example": "+571234567890"
                                     },
-                                    "logo": {
-                                        "description": "Nuevo logo de la empresa (archivo)",
+                                    "company_id": {
+                                        "type": "number",
+                                        "example": "2"
+                                    },
+                                    "rol_company_id": {
                                         "type": "string",
-                                        "format": "binary"
+                                        "example": "3"
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": "true"
                                     }
                                 },
                                 "type": "object"
@@ -419,31 +513,35 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Empresa actualizada correctamente",
+                        "description": "Empleado actualizado correctamente",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": "1"
-                                        },
-                                        "name": {
+                                        "first_name": {
                                             "type": "string",
-                                            "example": "Nuevo nombre de la empresa"
+                                            "example": "Pedro"
+                                        },
+                                        "last_name": {
+                                            "type": "string",
+                                            "example": "Rojas"
                                         },
                                         "email": {
                                             "type": "string",
                                             "format": "email",
-                                            "example": "nuevoemail@empresa.com"
+                                            "example": "pedro123@empleado.com"
                                         },
-                                        "logo": {
+                                        "phone_number": {
                                             "type": "string",
-                                            "example": "nuevo-nombre-de-la-empresa-2024-04-20-23-31-05.png"
+                                            "example": "+571234567890"
                                         },
-                                        "website": {
+                                        "company_id": {
+                                            "type": "number",
+                                            "example": "2"
+                                        },
+                                        "rol_company_id": {
                                             "type": "string",
-                                            "example": "https://www.nuevaempresa.com"
+                                            "example": "3"
                                         },
                                         "status": {
                                             "type": "boolean",
@@ -466,14 +564,16 @@
                         }
                     }
                 }
-            },
-            "delete": {
+            }
+        },
+        "/api/employees/{id}/delete": {
+            "post": {
                 "tags": [
                     "Empleados"
                 ],
-                "summary": "Elimina una empresa",
+                "summary": "Elimina un empleado",
                 "description": "No elimina el registro solo cambia de activo a inactivo, esto para no perder información, desde el Front-end se puede manejar este estado para mostrar o no mostrar los registros",
-                "operationId": "bd97927cf2dedf50b48ebf1a3bfc487e",
+                "operationId": "f7d9ff268e8ced5fbf9949fd2be1b8b1",
                 "parameters": [
                     {
                         "name": "id",
@@ -485,9 +585,25 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "X-Requested-By": {
+                                        "description": "Encabezado para identificar que la solicitud proviene de la API",
+                                        "type": "string",
+                                        "example": "API"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
-                    "204": {
-                        "description": "Empresa eliminada correctamente"
+                    "200": {
+                        "description": "Empleado eliminado correctamente"
                     }
                 }
             }

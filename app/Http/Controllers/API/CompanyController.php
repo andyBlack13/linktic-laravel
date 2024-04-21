@@ -7,17 +7,9 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Http\Requests\CompanyRequest;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cookie;
-//use Storage;
 use Illuminate\Support\Facades\Storage;
 
 use OpenApi\Annotations as OA;
-
-// Obtener el token CSRF de la cookie
-//$csrfToken = Cookie::get('XSRF-TOKEN');
-
-// Agregar el token CSRF como encabezado X-CSRF-TOKEN
-//$request->headers->add(['X-CSRF-TOKEN' => $csrfToken]);
 
 /**
 * @OA\Info(
@@ -117,8 +109,6 @@ class CompanyController extends Controller
         return view('companies.create');
     }
 
-//    security={{"X-CSRF-TOKEN": { Cookie::get('XSRF-TOKEN')}}},
-
 /**
  * Crea una nueva empresa
  * 
@@ -128,34 +118,46 @@ class CompanyController extends Controller
  * @OA\Post (
  *     path="/api/companies",
  *     tags={"Empresas"},
+ *     description="Se ha agregado un campo más sólo para validar que es API y pueda responder con un JSON y no con la vista para blade, esto no se hace normalmente pero lo agregue para que ustedes pudieran testear ya sea desde la API de Swagger o desde la interfaz de usuario. Para testear solo ve cambiando los emails en cada prueba y carga una imagen.",
  *     @OA\RequestBody(
- *         @OA\JsonContent(
- *             @OA\Property(
- *                 property="name",
- *                 type="string",
- *                 example="Nombre de la empresa"
- *             ),
- *             @OA\Property(
- *                 property="email",
- *                 type="string",
- *                 format="email",
- *                 example="empresa@example.com"
- *             ),
- *             @OA\Property(
- *                 property="logo",
- *                 type="string",
- *                 format="binary",
- *                 description="Logo de la empresa (archivo)"
- *             ),
- *             @OA\Property(
- *                 property="website",
- *                 type="string",
- *                 example="https://www.empresa.com"
- *             ),
- *             @OA\Property(
- *                  property="status",
- *                  type="boolean",
- *                  example="true"
+ *         required=true,
+ *         description="Datos de la empresa incluyendo el logo",
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 @OA\Property(
+ *                     property="name",
+ *                     type="string",
+ *                     example="Nombre de la empresa"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="email",
+ *                     type="string",
+ *                     format="email",
+ *                     example="empresa123456@example123456.com"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="logo",
+ *                     type="string",
+ *                     format="binary",
+ *                     description="Logo de la empresa (archivo)"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="website",
+ *                     type="string",
+ *                     example="https://www.empresa.com"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="status",
+ *                     type="boolean",
+ *                     example=true
+ *                 ),
+ *                 @OA\Property(
+ *                     property="X-Requested-By",
+ *                     type="string",
+ *                     example="API",
+ *                     description="Encabezado para identificar que la solicitud proviene de la API"
+ *                 )
  *             )
  *         )
  *     ),
@@ -173,7 +175,7 @@ class CompanyController extends Controller
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Internal Server Error"
+ *         description="Internal Server Error, Email Duplicated, Try with other email"
  *     )
  * )
  */
@@ -195,14 +197,15 @@ class CompanyController extends Controller
             $fileName = Str::slug($validatedData['name']) . '-' . now()->format('Y-m-d-H-i-s') . '.' . $extension;
             $file->storeAs('public', $fileName);
             $company->logo = $fileName;
+
+            $url = Storage::url($fileName);
+            error_log($url);
         }
         
         $company->save();
 
-        $url = Storage::url($fileName);
-        error_log($url);
-
-        if ($request->wantsJson()) {
+        // Verifica si la solicitud proviene de la API si no retorna una vista
+        if ($request->has('X-Requested-By') && $request->input('X-Requested-By') === 'API') {
             return response()->json($company, 201);
         } else {
             return redirect()->route('companies.index');
@@ -244,29 +247,46 @@ class CompanyController extends Controller
  *             type="integer"
  *         )
  *     ),
+ *     description="Se ha agregado un campo más sólo para validar que es API y pueda responder con un JSON y no con la vista para blade, esto no se hace normalmente pero lo agregue para que ustedes pudieran testear ya sea desde la API de Swagger o desde la interfaz de usuario. Para testear solo ve cambiando los emails en cada prueba y carga una imagen. Puedes ejecutar el endpoint para traer todas las empresas y tomar el id del registro para introducirlo.",
  *     @OA\RequestBody(
- *         @OA\JsonContent(
- *             @OA\Property(
- *                 property="name",
- *                 type="string",
- *                 example="Nuevo nombre de la empresa"
- *             ),
- *             @OA\Property(
- *                 property="email",
- *                 type="string",
- *                 format="email",
- *                 example="nuevoemail@empresa.com"
- *             ),
- *             @OA\Property(
- *                 property="website",
- *                 type="string",
- *                 example="https://www.nuevaempresa.com"
- *             ),
- *             @OA\Property(
- *                 property="logo",
- *                 type="string",
- *                 format="binary",
- *                 description="Nuevo logo de la empresa (archivo)"
+ *         required=true,
+ *         description="Datos de la empresa incluyendo el logo",
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 @OA\Property(
+ *                     property="name",
+ *                     type="string",
+ *                     example="Nombre de la empresa"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="email",
+ *                     type="string",
+ *                     format="email",
+ *                     example="empresa123456@example123456.com"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="logo",
+ *                     type="string",
+ *                     format="binary",
+ *                     description="Logo de la empresa (archivo)"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="website",
+ *                     type="string",
+ *                     example="https://www.empresa.com"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="status",
+ *                     type="boolean",
+ *                     example=true
+ *                 ),
+ *                 @OA\Property(
+ *                     property="X-Requested-By",
+ *                     type="string",
+ *                     example="API",
+ *                     description="Encabezado para identificar que la solicitud proviene de la API"
+ *                 )
  *             )
  *         )
  *     ),
@@ -318,18 +338,24 @@ class CompanyController extends Controller
  *                 example="2024-04-21T00:45:15"
  *             )
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=419,
+ *         description="Token CSRF mismatch"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Not Found"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal Server Error, Email Duplicated, Try with other email"
  *     )
  * )
  */
 
     public function update(CompanyRequest $request, $id)
     {
-        // Obtener el token CSRF de la cookie
-        //$csrfToken = Cookie::get('XSRF-TOKEN');
-
-        // Agregar el token CSRF como encabezado X-CSRF-TOKEN
-        //$request->headers->add(['X-CSRF-TOKEN' => $csrfToken]);
-
         $company = Company::findOrFail($id);
         $validatedData = $request->validated();
         
@@ -351,7 +377,8 @@ class CompanyController extends Controller
         
         $company->save();
     
-        if ($request->wantsJson()) {
+        // Verifica si la solicitud proviene de la API si no retorna una vista
+        if ($request->has('X-Requested-By') && $request->input('X-Requested-By') === 'API') {
             return response()->json($company, 200);
         } else {
             return redirect()->route('companies.index');
@@ -364,9 +391,10 @@ class CompanyController extends Controller
  * @param  int  $id
  * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
  * 
- * @OA\Delete (
- *     path="/api/companies/{id}",
+ * @OA\Post (
+ *     path="/api/companies/{id}/delete",
  *     tags={"Empresas"},
+ *     description="Se ha agregado un campo más sólo para validar que es API y pueda responder con un JSON. Ademas se utilizó el metodo POST porque solo inactivamos el registro. Coloca solo un ID existente de alguna empresa y ejecuta.",
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -376,20 +404,31 @@ class CompanyController extends Controller
  *             type="integer"
  *         )
  *     ),
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *            @OA\Property(
+ *                property="X-Requested-By",
+ *                type="string",
+ *                example="API",
+ *                description="Encabezado para identificar que la solicitud proviene de la API"
+ *            )
+ *         )
+ *     ),
  *     @OA\Response(
- *         response=204,
+ *         response=200,
  *         description="Empresa eliminada correctamente"
  *     )
  * )
  */
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         $company = Company::findOrFail($id);
         $company->update(['status' => false]);
 
-        if (request()->wantsJson()) {
-            return response()->json(null, 204);
+        // Verifica si la solicitud proviene de la API si no retorna una vista
+        if ($request->has('X-Requested-By') && $request->input('X-Requested-By') === 'API') {
+            return response()->json($company, 200);
         } else {
             return redirect()->route('companies.index')->with('success', 'Empresa eliminada correctamente');
         }
