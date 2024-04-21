@@ -46,9 +46,25 @@ Asegúrate de tener instalados los siguientes requisitos previos:
     cp .env.example .env
 ````
 
+6. Configura tu archivo .env con la información correspondiente y comenta la linea sqlite, por ejemplo:
+
+````bash
+    APP_NAME=Linktic-Laravel
+    APP_URL="http://localhost:8000"
+
+    # DB_CONNECTION=sqlite
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=linktic-laravel
+    DB_USERNAME=root
+    DB_PASSWORD=
+````
+
 6. Genera una clave de aplicación única:
 
-
+````bash
+    php artisan key:generate
+````
 
 7. Configura tu base de datos en el archivo `.env` y luego ejecuta las migraciones de la base de datos para crear las tablas necesarias:
 
