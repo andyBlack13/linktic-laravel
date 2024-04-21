@@ -17,79 +17,78 @@ Para configurar y ejecutar este proyecto en tu entorno local, sigue estos pasos:
 
 Asegúrate de tener instalados los siguientes requisitos previos:
 
-````bash
 1. Clona este repositorio en tu máquina local:
-
-    ```bash
+````bash
     git clone https://github.com/tu-usuario/proyecto-laravel.git
-    ```
+````
 
 2. Navega hasta el directorio del proyecto:
 
-    ```bash
+````bash
     cd proyecto-laravel
-    ```
+````
 
 3. Instala las dependencias de PHP utilizando Composer:
 
-    ```bash
+````bash
     composer install
-    ```
+````
 
 4. Instala las dependencias de JavaScript utilizando NPM:
 
-    ```bash
+````bash
     npm install
-    ```
+````
 
 5. Copia el archivo de configuración `.env.example` y créalo como `.env`:
 
-    ```bash
+````bash
     cp .env.example .env
-    ```
+````
 
 6. Genera una clave de aplicación única:
 
-    ```bash
-    php artisan key:generate
-    ```
+
 
 7. Configura tu base de datos en el archivo `.env` y luego ejecuta las migraciones de la base de datos para crear las tablas necesarias:
 
-    ```bash
+````bash
     php artisan migrate
-    ```
+````
 
 8. Ejecuta las semillas de la base de datos para poblar la base de datos con datos de ejemplo:
 
-    ```bash
+````bash
     php artisan db:seed
-    php artisan db:seed --class=RolesSeeder
-    php artisan db:seed --class=CompaniesSeeder
-    php artisan db:seed --class=EmployeesSeeder
-    php artisan db:seed --class=RolesCompanySeeder
-    ```
 ````
-
-
+````bash
+    php artisan db:seed --class=RolesSeeder
+````
+````bash
+    php artisan db:seed --class=CompaniesSeeder
+````
+````bash
+    php artisan db:seed --class=EmployeesSeeder
+````
+````bash
+    php artisan db:seed --class=RolesCompanySeeder
+````
 
 ## Ejecución
 
 Una vez que hayas completado la configuración, puedes iniciar el servidor de desarrollo de Laravel ejecutando el siguiente comando:
 
-
-````bash
 1. Corre el proyecto
-
-    ```bash
+````bash
     php artisan serve
-    ```
-    ```bash
-    npm run dev
-    ```
 ````
 
-Visita http://localhost:8000 en tu navegador para ver la aplicación en funcionamiento.
+2. Abre otra pestaña de terminal, navega hasta la carpeta del proyecto y ejecuta
+````bash
+    npm run dev
+````
+
+3. Visita http://localhost:8000 en tu navegador para ver la aplicación en funcionamiento.
 
 ##  Documentación de API - Swagger
 La documentación de la API está disponible en /api/documentation una vez que el servidor está en funcionamiento. Puedes acceder a ella a través de tu navegador web.
