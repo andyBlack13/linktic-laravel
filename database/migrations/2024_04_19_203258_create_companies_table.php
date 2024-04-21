@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('logo');
-            $table->string('website');
+            $table->string('logo')->nullable();
+            $table->string('website')->nullable();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

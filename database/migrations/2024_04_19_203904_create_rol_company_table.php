@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('rol_company', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->integer('min-salary');
-            $table->integer('max-salary');
+            $table->integer('min_salary');
+            $table->integer('max_salary');
             $table->string('currency');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

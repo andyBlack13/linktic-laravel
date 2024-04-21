@@ -1,0 +1,313 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Linktic",
+        "description": "Documentación de API para empresas y empleados",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "paths": {
+        "/api/companies": {
+            "get": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Obtiene las empresas activas",
+                "operationId": "80eb39cf3f8d7b480171fea2f33d6060",
+                "responses": {
+                    "200": {
+                        "description": "Obtiene las empresas activas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Company 1"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "company1@example.com"
+                                                    },
+                                                    "logo": {
+                                                        "type": "string",
+                                                        "example": "company1_logo.png"
+                                                    },
+                                                    "website": {
+                                                        "type": "string",
+                                                        "example": "https://www.company1.com"
+                                                    },
+                                                    "sttaus": {
+                                                        "type": "boolean",
+                                                        "example": "true"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-04-20T17:30:22"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2023-02-23 12:33:45"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Crea una nueva empresa",
+                "operationId": "cee123b1da67beec88470f8ceb3fcb95",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Nombre de la empresa"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "empresa@example.com"
+                                    },
+                                    "logo": {
+                                        "description": "Logo de la empresa (archivo)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "website": {
+                                        "type": "string",
+                                        "example": "https://www.empresa.com"
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": "true"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Empresa creada exitosamente"
+                    },
+                    "419": {
+                        "description": "Token CSRF mismatch"
+                    }
+                },
+                "security": [
+                    {
+                        "X-CSRF-TOKEN": []
+                    }
+                ]
+            }
+        },
+        "/api/companies/{id}": {
+            "put": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Actualiza los datos de una empresa",
+                "operationId": "c125e6ebfb9c7669666225b619092333",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Nuevo nombre de la empresa"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "nuevoemail@empresa.com"
+                                    },
+                                    "website": {
+                                        "type": "string",
+                                        "example": "https://www.nuevaempresa.com"
+                                    },
+                                    "logo": {
+                                        "description": "Nuevo logo de la empresa (archivo)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Empresa actualizada correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "number",
+                                            "example": "1"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Nuevo nombre de la empresa"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "format": "email",
+                                            "example": "nuevoemail@empresa.com"
+                                        },
+                                        "logo": {
+                                            "type": "string",
+                                            "example": "nuevo-nombre-de-la-empresa-2024-04-20-23-31-05.png"
+                                        },
+                                        "website": {
+                                            "type": "string",
+                                            "example": "https://www.nuevaempresa.com"
+                                        },
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-04-20T23:31:05"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-04-21T00:45:15"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Elimina una empresa",
+                "operationId": "124aa61ff352c83ede5872644b0ac00d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Empresa eliminada correctamente"
+                    }
+                }
+            }
+        },
+        "/api/employees": {
+            "get": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Título que define lo que hará esta URI",
+                "operationId": "2058499f556b4bb9477e07e7a0912c43",
+                "responses": {
+                    "200": {
+                        "description": "Obtiene los empleados activos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Aderson Felix"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "Jara Lazaro"
+                                                    },
+                                                    "logo": {
+                                                        "type": "string",
+                                                        "example": "Jara Lazaro"
+                                                    },
+                                                    "website": {
+                                                        "type": "string",
+                                                        "example": "Jara Lazaro"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "example": "2023-02-23T00:09:16.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "example": "2023-02-23T12:33:45.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

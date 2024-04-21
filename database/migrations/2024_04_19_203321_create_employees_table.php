@@ -16,9 +16,10 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
-            $table->string('phone_number');
+            $table->string('phone_number')->nullable();
             $table->foreignId('company_id')->nullable()->index();
             $table->foreignId('rol_company_id')->nullable()->index();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
