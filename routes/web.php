@@ -15,6 +15,7 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 // Rutas para las vistas Blade
+// Se crearon para poder entregar un testeo interactivo desde laravel.
 Route::middleware(['auth', 'verified'])->group(function () {
     //BLADE
     Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
@@ -35,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Rutas para la API
-Route::prefix('api')->middleware('auth')->group(function () {
+Route::prefix('api')->middleware('auth', 'web')->group(function () {
     Route::get('/companies', [CompanyController::class, 'index']);
     Route::post('/companies', [CompanyController::class, 'store']);
     Route::put('/companies/{id}', [CompanyController::class, 'update']);

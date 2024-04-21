@@ -31,7 +31,7 @@
                         <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
                             <h3 class="text-3xl font-bold mb-4" style="text-align: center;">¡Bienvenido a mi proyecto en Laravel para Linktic!</h3>
                             <p class="text-lg text-gray-600 dark:text-gray-400">
-                                Este proyecto tiene como objetivo crear una API para CRUD de Empresas, Empleados y ademas poder testear la api a través de una pequeña interfaz grafica con vistas blade o desde la documentación de swagger. Estoy emocionada de presentarte lo que he desarrollado. Espero que sea de tu agrado. <br>
+                                Este proyecto tiene como objetivo crear una API para CRUD de Empresas, Empleados y ademas poder testear la api a través de una pequeña interfaz grafica con vistas blade o desde la documentación de swagger. Espero que sea de tu agrado. <br>
                                 Puedes ingresar a <strong>Inicio de sesión</strong> con las siguientes credenciales: <br><br>
                                 Usuario: <strong>admin@admin.com</strong> <br>
                                 Contraseña: <strong>contraseña</strong>

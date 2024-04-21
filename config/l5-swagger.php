@@ -61,7 +61,7 @@ return [
              * Middleware allows to prevent unexpected access to API documentation
             */
             'middleware' => [
-                'api' => [],
+                'api' => ['web'],
                 'asset' => [],
                 'docs' => [],
                 'oauth2_callback' => [],
@@ -153,11 +153,6 @@ return [
         */
         'securityDefinitions' => [
             'securitySchemes' => [
-                'csrf_token' => [
-                    'type' => 'apiKey',
-                    'name' => 'X-CSRF-TOKEN',
-                    'in' => 'header',
-                ],
                 /*
                  * Examples of Security schemes
                 */

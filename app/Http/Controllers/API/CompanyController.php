@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\Storage;
 
 use OpenApi\Annotations as OA;
 
+// Obtener el token CSRF de la cookie
+//$csrfToken = Cookie::get('XSRF-TOKEN');
+
+// Agregar el token CSRF como encabezado X-CSRF-TOKEN
+//$request->headers->add(['X-CSRF-TOKEN' => $csrfToken]);
+
 /**
 * @OA\Info(
 *             title="Linktic", 
@@ -84,6 +90,14 @@ class CompanyController extends Controller
  *                 )
  *             )
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Not Found"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal Server Error"
  *     )
  * )
  */
@@ -103,6 +117,8 @@ class CompanyController extends Controller
         return view('companies.create');
     }
 
+//    security={{"X-CSRF-TOKEN": { Cookie::get('XSRF-TOKEN')}}},
+
 /**
  * Crea una nueva empresa
  * 
@@ -112,7 +128,6 @@ class CompanyController extends Controller
  * @OA\Post (
  *     path="/api/companies",
  *     tags={"Empresas"},
- *     security={{"X-CSRF-TOKEN": {}}},
  *     @OA\RequestBody(
  *         @OA\JsonContent(
  *             @OA\Property(
@@ -151,17 +166,21 @@ class CompanyController extends Controller
  *     @OA\Response(
  *         response=419,
  *         description="Token CSRF mismatch"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Not Found"
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal Server Error"
  *     )
  * )
  */
 
     public function store(CompanyRequest $request)
     {
-        // Obtener el token CSRF de la cookie
-        $csrfToken = Cookie::get('XSRF-TOKEN');
-
-        // Agregar el token CSRF como encabezado X-CSRF-TOKEN
-        $request->headers->add(['X-CSRF-TOKEN' => $csrfToken]);
+        
 
         $validatedData = $request->validated();
     
@@ -306,10 +325,10 @@ class CompanyController extends Controller
     public function update(CompanyRequest $request, $id)
     {
         // Obtener el token CSRF de la cookie
-        $csrfToken = Cookie::get('XSRF-TOKEN');
+        //$csrfToken = Cookie::get('XSRF-TOKEN');
 
         // Agregar el token CSRF como encabezado X-CSRF-TOKEN
-        $request->headers->add(['X-CSRF-TOKEN' => $csrfToken]);
+        //$request->headers->add(['X-CSRF-TOKEN' => $csrfToken]);
 
         $company = Company::findOrFail($id);
         $validatedData = $request->validated();
